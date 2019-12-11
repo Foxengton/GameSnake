@@ -3,7 +3,7 @@ pygame.init()
 
 
 
-#===== КЛАССЫ И ФУНКЦИИ =====#
+#===== КЛАССЫ =====#
 # Точка
 class Point:
     def __init__(self, x = 0, y = 0):
@@ -21,16 +21,6 @@ class Size:
 
         if y == None: self.y = x
         else: self.y = y
-
-# Генерация координат яблока
-def appleGenerate():
-    point = Point(random.randrange(0, coordSize.x), random.randrange(0, coordSize.y))
-    return point
-
-def info():
-    os.system("cls") # Очистка консоли
-    print('Времени прошло: ' + str(millisecondLeft // 1000) + ' секунд') # Вывод очков в консоль
-    print('Счет: ' + str(score)) # Вывод очков в консоль
 
 
 
@@ -77,7 +67,18 @@ snakeSegments = [] # Список координат сегментов змей
 millisecondLeft = 0 # Времени прошло
 
 
-#===== МЕХАНИКА =====#
+#===== ФУНКЦИИ =====#
+# Вывод информации об игре в консоль
+def info():
+    os.system("cls") # Очистка консоли
+    print('Времени прошло: ' + str(millisecondLeft // 1000) + ' секунд') # Вывод очков в консоль
+    print('Счет: ' + str(score)) # Вывод очков в консоль
+
+# Генерация координат яблока
+def appleGenerate():
+    point = Point(random.randrange(0, coordSize.x), random.randrange(0, coordSize.y))
+    return point
+
 # Управление
 def move(event,direction,score):
     if   event.key == pygame.K_w and (score < 1 or direction != 'Down'):    direction = 'Up'
@@ -99,6 +100,7 @@ def gameEnd():
             print('Причина смерти: Столкновение с телом') #Вывод в консоль
             exit(0)
 
+
 # Цикл игры
 while 1:
     for event in pygame.event.get(): # Получение события с модуля
@@ -115,10 +117,9 @@ while 1:
     elif direction == 'Down':   position.y += 1 # Вниз
     elif direction == 'Left':   position.x -= 1 # Влево
     elif direction == 'Right':  position.x += 1 # Вправо
+    #====================#
 
-    
     gameEnd() # Проверка на завершении игры
-
     draw() # Отрисовка элементов
 
     # Если змейка съела яблоко
@@ -131,10 +132,9 @@ while 1:
 
         score += 1 #Увеличение очков
         textScore = font.render('Счет: ' + str(score), 0, (0, 0, 0)) # Обновление счета
+    
+    pygame.display.update() # Обновление экрана
+    pygame.time.delay(100) # Пауза
 
-    # Обновление экрана
-    pygame.display.update()
-    pygame.time.delay(100)
-
-    millisecondLeft += 100
-    info()
+    millisecondLeft += 100 # Увеличение пройденных мс
+    info() # Вывод информации об игре в консоль
