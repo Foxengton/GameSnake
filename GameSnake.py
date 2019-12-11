@@ -24,6 +24,48 @@ class Size:
 
 
 
+#===== ПЕРЕМЕННЫЕ =====#
+direction = 'None' # Клавиша, нажатая последней
+score = 0 # Число сегментов и кол-во очков
+snakeSegments = [] # Список координат сегментов змейки
+millisecondLeft = 0 # Времени прошло
+
+
+
+#===== ФУНКЦИИ =====#
+# Вывод информации об игре в консоль
+def info():
+    os.system("cls") # Очистка консоли
+    print('Времени прошло: ' + str(millisecondLeft // 1000) + ' секунд') # Вывод очков в консоль
+    print('Счет: ' + str(score)) # Вывод очков в консоль
+
+# Генерация координат яблока
+def appleGenerate():
+    point = Point(random.randrange(0, coordSize.x), random.randrange(0, coordSize.y))
+    return point
+
+# Управление
+def move(key):
+    if   key == pygame.K_w and (score < 1 or direction != 'Down'):    return 'Up'
+    elif key == pygame.K_s and (score < 1 or direction != 'Up'):      return 'Down'
+    elif key == pygame.K_a and (score < 1 or direction != 'Right'):   return 'Left'
+    elif key == pygame.K_d and (score < 1 or direction != 'Left'):    return 'Right'
+    return direction
+
+# Конец игры
+def gameEnd():
+    # Столкновение со стеной
+    if (position.x < 0) or (position.x > coordSize.x) or (position.y < 0) or (position.y > coordSize.y):
+        print('Причина смерти: Столкновение со стеной') #Вывод в консоль
+        exit(0)
+
+    # Столкновение с телом
+    for segment in snakeSegments:
+        if (position.equal(segment)):
+            print('Причина смерти: Столкновение с телом') #Вывод в консоль
+            exit(0)
+
+
 #===== РАЗМЕРЫ И КООРДИНАТЫ =====#
 cellSize = 25 # Размер клетки
 screenSize = Size(900, 700) # Размер окна
@@ -60,52 +102,12 @@ snakeHead.fill((249, 180, 6)) # Заливка головы
 snakeBody = pygame.Surface((cellSize, cellSize)) # Создание тела
 snakeBody.fill((252, 210, 106)) # Заливка тела
 
-#===== ПЕРЕМЕННЫЕ =====#
-direction = 'None' # Клавиша, нажатая последней
-score = 0 # Число сегментов и кол-во очков
-snakeSegments = [] # Список координат сегментов змейки
-millisecondLeft = 0 # Времени прошло
 
-
-#===== ФУНКЦИИ =====#
-# Вывод информации об игре в консоль
-def info():
-    os.system("cls") # Очистка консоли
-    print('Времени прошло: ' + str(millisecondLeft // 1000) + ' секунд') # Вывод очков в консоль
-    print('Счет: ' + str(score)) # Вывод очков в консоль
-
-# Генерация координат яблока
-def appleGenerate():
-    point = Point(random.randrange(0, coordSize.x), random.randrange(0, coordSize.y))
-    return point
-
-# Управление
-def move(event,direction,score):
-    if   event.key == pygame.K_w and (score < 1 or direction != 'Down'):    direction = 'Up'
-    elif event.key == pygame.K_s and (score < 1 or direction != 'Up'):      direction = 'Down'
-    elif event.key == pygame.K_a and (score < 1 or direction != 'Right'):   direction = 'Left'
-    elif event.key == pygame.K_d and (score < 1 or direction != 'Left'):    direction = 'Right'
-    return direction
-
-# Конец игры
-def gameEnd():
-    # Столкновение со стеной
-    if (position.x < 0) or (position.x > coordSize.x) or (position.y < 0) or (position.y > coordSize.y):
-        print('Причина смерти: Столкновение со стеной') #Вывод в консоль
-        exit(0)
-
-    # Столкновение с телом
-    for segment in snakeSegments:
-        if (position.equal(segment)):
-            print('Причина смерти: Столкновение с телом') #Вывод в консоль
-            exit(0)
-
-
-# Цикл игры
+# Игра
 while 1:
     for event in pygame.event.get(): # Получение события с модуля
         if event.type == pygame.QUIT: exit(0) # Выход
-        elif event.type == pygame.KEYDOWN: direction = move(event, direction, score) # Если была нажата клавиша
+        elif event.type == pygame.KEYDOWN: direction = move(event.key) # Если была нажата клавиша
 
     # Смещение сегментов тела
     if (len(snakeSegments) > 0):
