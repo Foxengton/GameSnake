@@ -28,7 +28,6 @@ class Size:
 direction = 'None' # Клавиша, нажатая последней
 score = 0 # Число сегментов и кол-во очков
 snakeSegments = [] # Список координат сегментов змейки
-millisecondLeft = 0 # Времени прошло
 
 
 
@@ -36,7 +35,6 @@ millisecondLeft = 0 # Времени прошло
 # Вывод информации об игре в консоль
 def info():
     os.system("cls") # Очистка консоли
-    print('Времени прошло: ' + str(millisecondLeft // 1000) + ' секунд') # Вывод очков в консоль
     print('Счет: ' + str(score)) # Вывод очков в консоль
 
 # Генерация координат яблока
@@ -69,7 +67,7 @@ def gameEnd():
 #===== РАЗМЕРЫ И КООРДИНАТЫ =====#
 cellSize = 25 # Размер клетки
 screenSize = Size(900, 700) # Размер окна
-coordSize = Size(screenSize.x // cellSize, screenSize.y // cellSize) # Размер сетки
+coordSize = Size((screenSize.x // cellSize) - 1, (screenSize.y // cellSize) - 1) # Размер сетки
 
 position = Point(coordSize.x // 2, coordSize.y // 2) # Координаты змейки
 appleCoords = appleGenerate()
@@ -105,6 +103,9 @@ snakeBody.fill((252, 210, 106)) # Заливка тела
 
 # Игра
 while 1:
+    pygame.display.update() # Обновление экрана
+    pygame.time.delay(100) # Пауза
+
     for event in pygame.event.get(): # Получение события с модуля
         if event.type == pygame.QUIT: exit(0) # Выход
         elif event.type == pygame.KEYDOWN: direction = move(event.key) # Если была нажата клавиша
@@ -134,9 +135,5 @@ while 1:
 
         score += 1 #Увеличение очков
         textScore = font.render('Счет: ' + str(score), 0, (0, 0, 0)) # Обновление счета
-    
-    pygame.display.update() # Обновление экрана
-    pygame.time.delay(100) # Пауза
 
-    millisecondLeft += 100 # Увеличение пройденных мс
-    info() # Вывод информации об игре в консоль
+        info() # Вывод информации об игре в консоль
